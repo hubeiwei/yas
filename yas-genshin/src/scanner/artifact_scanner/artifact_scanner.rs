@@ -40,6 +40,10 @@ pub struct GenshinArtifactScanner {
     capturer: Rc<dyn Capturer<RgbImage>>,
 }
 
+impl GenshinArtifactScanner {
+    pub const MAX_COUNT: usize = 2100;
+}
+
 // constructor
 impl GenshinArtifactScanner {
     fn get_image_to_text() -> Result<Box<dyn ImageToText<RgbImage> + Send>> {
@@ -68,7 +72,7 @@ impl GenshinArtifactScanner {
                 window_info_repo,
             )?,
             controller: Rc::new(RefCell::new(
-                GenshinRepositoryScanController::new(window_info_repo, controller_config, game_info.clone())?
+                GenshinRepositoryScanController::new(window_info_repo, controller_config, game_info.clone(), true)?
             )),
             game_info,
             image_to_text: Self::get_image_to_text()?,
@@ -92,7 +96,7 @@ impl GenshinArtifactScanner {
             scanner_config: GenshinArtifactScannerConfig::from_arg_matches(arg_matches)?,
             window_info,
             controller: Rc::new(RefCell::new(
-                GenshinRepositoryScanController::from_arg_matches(window_info_repo, arg_matches, game_info.clone())?
+                GenshinRepositoryScanController::from_arg_matches(window_info_repo, arg_matches, game_info.clone(), true)?
             )),
             game_info,
             image_to_text: Self::get_image_to_text()?,
@@ -141,7 +145,7 @@ impl GenshinArtifactScanner {
         let count = self.scanner_config.number;
         let item_name = "圣遗物";
 
-        let max_count = 1800;
+        let max_count = Self::MAX_COUNT as i32;
         if count > 0 {
             return Ok(max_count.min(count));
         }
